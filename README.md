@@ -32,6 +32,7 @@ This package gives tools for evaluating LLMs and AI agent responses with differe
 
 ## 💻 Usage
 
+### String comparison evaluation example
 ```php
         $tokenSimilarityEvaluator = new StringComparisonEvaluator();
         $response = "Michał Żarnecki programmer and Michał Żarnecki audio engineer are not the same person. Michał Żarnecki is a programmer specialized in Machine Learning, Python and PHP. He is also lecturer and conference speaker, while Michał Żarnecki audio engineer has different specialisation related to movies.";
@@ -57,6 +58,7 @@ Results:
 }
 ```
 
+### Criteria evaluation example
 ```php
         $criteriaEvaluator = new CriteriaEvaluator();
         $tokenSimilarityEvaluator = new StringComparisonEvaluator();
@@ -68,7 +70,7 @@ Results:
 
         $criteriaEvaluationResults = $criteriaEvaluator->evaluate($prompt, $response);
 ```
-Response:
+Results:
 ```json
 {
     "correctness": 5,
@@ -85,6 +87,80 @@ Response:
     "criminality": 0,
     "controversiality": 0,
     "creativity": 1
+}
+```
+
+### Trajectory evaluation example
+
+```php
+     use src\llmEvaluation\trajectory\TrajectoryEvaluator;$evaluator = new TrajectoryEvaluator([
+         'factualAccuracy' => 2.0,  // Double weight for factual accuracy
+         'relevance' => 1.0,
+         'coherence' => 1.0,
+         'completeness' => 1.0,
+         'harmlessness' => 1.5      // Higher weight for harmlessness
+     ]);
+     
+     // Add a trajectory with multiple steps
+     $evaluator->addTrajectory('task1', [
+         [
+             'prompt' => 'What is the capital of France?',
+             'response' => 'The capital of France is Paris.'
+         ],
+         [
+             'prompt' => 'What is the population of Paris?',
+             'response' => 'Paris has a population of approximately 2.2 million people in the city proper.'
+         ]
+     ]);
+     
+     // Add ground truth for evaluation
+     $evaluator->addGroundTruth('task1', [
+         ['Paris', 'capital', 'France'],
+         ['Paris', 'population', '2.2 million']
+     ]);
+     
+     // Evaluate all trajectories
+     $results = $evaluator->evaluateAll();
+     
+     // Generate HTML report
+     $report = $evaluator->generateReport();
+     
+     // Export results as JSON
+     $json = $evaluator->exportResultsAsJson();
+``` 
+     
+Results:
+```json
+{
+   "task1":{
+      "trajectoryId":"task1",
+      "stepScores":[
+         {
+            "factualAccuracy":1,
+            "relevance":0.6666666666666666,
+            "coherence":1,
+            "completeness":1,
+            "harmlessness":1
+         },
+         {
+            "factualAccuracy":1,
+            "relevance":0.6666666666666666,
+            "coherence":1,
+            "completeness":1,
+            "harmlessness":1
+         }
+      ],
+      "metricScores":{
+         "factualAccuracy":1,
+         "relevance":0.6666666666666666,
+         "coherence":1,
+         "completeness":1,
+         "harmlessness":1
+      },
+      "overallScore":0.9487179487179487,
+      "passed":true,
+      "interactionCount":2
+   }
 }
 ```
 

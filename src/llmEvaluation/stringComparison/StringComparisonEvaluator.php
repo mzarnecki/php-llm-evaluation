@@ -1,6 +1,6 @@
 <?php
 
-namespace src\stringComparison;
+namespace src\llmEvaluation\stringComparison;
 
 class StringComparisonEvaluator
 {
@@ -57,15 +57,17 @@ class StringComparisonEvaluator
         return [
             'recall' => round($recall, 2),
             'precision' => round($precision, 2),
-            'f1' => round($f1Score, 2)
+            'f1' => round($f1Score, 2),
         ];
     }
 
-    private function getNGrams($words, $n) {
+    private function getNGrams($words, $n)
+    {
         $nGrams = [];
         for ($i = 0; $i <= count($words) - $n; $i++) {
             $nGrams[] = implode(' ', array_slice($words, $i, $n));
         }
+
         return $nGrams;
     }
 }
