@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace tests\Unit;
 
-use LlmEvaluation\stringComparison\metric\BLEU;
-use LlmEvaluation\stringComparison\metric\METEOR;
-use LlmEvaluation\stringComparison\metric\ROUGE;
 use LlmEvaluation\stringComparison\StringComparisonEvaluator;
 use PHPUnit\Framework\TestCase;
 
@@ -53,10 +50,6 @@ class TokenBasedSimilarityEvaluatorTest extends TestCase
 
     private function getSut(): StringComparisonEvaluator
     {
-        return new StringComparisonEvaluator(
-            new BLEU(),
-            new ROUGE(),
-            new METEOR()
-        );
+        return new StringComparisonEvaluator();
     }
 }

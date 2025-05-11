@@ -39,9 +39,9 @@ This package gives tools for evaluating LLMs and AI agent responses with differe
         $candidate = 'this is the way cookie is crashed';
 
         $results = [
-            'ROUGE' => $tokenSimilarityEvaluator->calculateROUGE($reference, $response),
-            'BLEU' => $tokenSimilarityEvaluator->calculateBLEU($reference, $response),
-            'METEOR' => $tokenSimilarityEvaluator->calculateMETEOR($reference, $response),
+            'ROUGE' => $tokenSimilarityEvaluator->calculateROUGE($reference, $candidate),
+            'BLEU' => $tokenSimilarityEvaluator->calculateBLEU($reference, $candidate),
+            'METEOR' => $tokenSimilarityEvaluator->calculateMETEOR($reference, $candidate),
         ];
 ```
 Results:

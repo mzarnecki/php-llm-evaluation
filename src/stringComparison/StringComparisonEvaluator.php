@@ -9,11 +9,17 @@ use LlmEvaluation\stringComparison\metric\ROUGE;
 
 class StringComparisonEvaluator
 {
-    public function __construct(
-        private readonly BLEU $bleu,
-        private readonly ROUGE $rouge,
-        private readonly METEOR $meteor
-    ) {
+    private readonly BLEU $bleu;
+
+    private readonly ROUGE $rouge;
+
+    private readonly METEOR $meteor;
+
+    public function __construct()
+    {
+        $this->bleu = new BLEU();
+        $this->rouge = new ROUGE();
+        $this->meteor = new METEOR();
     }
 
     public function calculateBLEU(string $reference, string $candidate, int $n = 1): EvaluationResults
