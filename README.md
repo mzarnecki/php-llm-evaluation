@@ -50,13 +50,13 @@ Results:
   "ROUGE": {
      "metricName":  "ROUGE",
      "results": {
-       "recall": 0.23,
-       "precision": 0.3,
-       "f1": 0.26
+       "recall": 0.6,
+       "precision": 0.43,
+       "f1": 0.5
      }
   },
   "BLEU": {
-     "metricName": "ROUGE",
+     "metricName": "BLEU",
      "results": {
        "score": 0.43
      }
@@ -64,7 +64,12 @@ Results:
    "METEOR": {
       "metricName": "METEOR",
       "results": {
-         "score": 0.56
+        "score": 0.56,
+        "precision": 0.43,
+        "recall": 0.6,
+        "chunks": 1,
+        "penalty": 0.02,
+        "fMean": 0.58
       }
    }
 }
