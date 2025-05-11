@@ -35,26 +35,38 @@ This package gives tools for evaluating LLMs and AI agent responses with differe
 ### String comparison evaluation example
 ```php
         $tokenSimilarityEvaluator = new StringComparisonEvaluator();
-        $response = "Michał Żarnecki programmer and Michał Żarnecki audio engineer are not the same person. Michał Żarnecki is a programmer specialized in Machine Learning, Python and PHP. He is also lecturer and conference speaker, while Michał Żarnecki audio engineer has different specialisation related to movies.";
-        $compareResp = "Is Michał Żarnecki programmer is not the same person as Michał Żarnecki audio engineer. 
-        Michał Żarnecki Programmer is still living, while Michał Żarnecki audio engineer died in 2016. They cannot be the same person.
-        Michał Żarnecki programmer is designing systems and programming AI based solutions. He is also a lecturer.
-        Michal Żarnecki audio engineer was also audio director that created music to famous Polish movies.";
+        $reference = "that's the way cookie crumbles";
+        $candidate = 'this is the way cookie is crashed';
 
         $results = [
-            'ROUGE' => $tokenSimilarityEvaluator->calculateROUGE($compareResp, $response),
-            'BLEU' => $tokenSimilarityEvaluator->calculateBLEU($compareResp, $response),
+            'ROUGE' => $tokenSimilarityEvaluator->calculateROUGE($reference, $response),
+            'BLEU' => $tokenSimilarityEvaluator->calculateBLEU($reference, $response),
+            'METEOR' => $tokenSimilarityEvaluator->calculateMETEOR($reference, $response),
         ];
 ```
 Results:
 ```json
 {
   "ROUGE": {
-    "recall": 0.23,
-    "precision": 0.3,
-    "f1": 0.26
+     "metricName":  "ROUGE",
+     "results": {
+       "recall": 0.23,
+       "precision": 0.3,
+       "f1": 0.26
+     }
   },
-  "BLEU": 0.22
+  "BLEU": {
+     "metricName": "ROUGE",
+     "results": {
+       "score": 0.43
+     }
+  },
+   "METEOR": {
+      "metricName": "METEOR",
+      "results": {
+         "score": 0.56
+      }
+   }
 }
 ```
 
