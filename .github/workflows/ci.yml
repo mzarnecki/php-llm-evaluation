@@ -1,0 +1,43 @@
+name: CI
+
+# ❶  Run on every new PR and every push to the default branch
+on:
+  pull_request:            # PRs opened, reopened, or pushed to
+    branches: [ main ]     # <‑‑ change if your default branch is not “main”
+  push:
+    branches: [ main ]     # keeps the badge green after the merge
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    # ❷  Test against the PHP versions you care about
+    strategy:
+      matrix:
+        php: [8.2, 8.3]
+
+    steps:
+      # 1. Check out your code
+      - uses: actions/checkout@v4
+
+      # 2. Provision the requested PHP version
+      - uses: shivammathur/setup-php@v2           # most widely‑used PHP setup action :contentReference[oaicite:0]{index=0}
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none                          # you are using Pest’s type‑coverage, not Xdebug
+
+      # 3. Cache Composer downloads to make runs fast
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      # 4. Install your library (dev) dependencies
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      # 5. Run **exactly** the same meta‑script you already have
+      - name: Run full test suite
+        run: composer test
