@@ -1,8 +1,8 @@
 <?php
 
-namespace src\llmEvaluation\stringComparison\metric;
+namespace LlmEvaluation\stringComparison\metric;
 
-use src\llmEvaluation\EvaluationResults;
+use LlmEvaluation\EvaluationResults;
 
 class BLEU extends AbstractStringComparisonMetric
 {
@@ -24,21 +24,19 @@ class BLEU extends AbstractStringComparisonMetric
                     $matches++;
                 }
             }
-            $nGramMatches[$i] = $matches / max(count($candidateNGrams), 1);
+            $nGramMatches[$i] = $matches / max(is_countable($candidateNGrams) ? count($candidateNGrams) : 0, 1);
         }
 
         $precision = array_product($nGramMatches);
         $brevityPenalty = ($candidateLength > $referenceLength)
             ? 1
             : exp(1 - ($referenceLength / max($candidateLength, 1)));
-        $result = round($brevityPenalty * pow($precision, 1 / $n), 2);
+        $result = round($brevityPenalty * $precision ** (1 / $n), 2);
 
-        $results = new EvaluationResults(
+        return new EvaluationResults(
             $this->getMetricName(),
             ['score' => $result]
         );
-
-        return $results;
     }
 
     public function getMetricName(): string

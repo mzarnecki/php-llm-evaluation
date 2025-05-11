@@ -1,8 +1,8 @@
 <?php
 
-namespace src\llmEvaluation\stringComparison\metric;
+namespace LlmEvaluation\stringComparison\metric;
 
-use src\llmEvaluation\EvaluationResults;
+use LlmEvaluation\EvaluationResults;
 
 class ROUGE extends AbstractStringComparisonMetric
 {
@@ -21,13 +21,13 @@ class ROUGE extends AbstractStringComparisonMetric
             }
         }
 
-        $recall = $matches / max(count($referenceNGrams), 1);
-        $precision = $matches / max(count($candidateNGrams), 1);
+        $recall = $matches / max(is_countable($referenceNGrams) ? count($referenceNGrams) : 0, 1);
+        $precision = $matches / max(is_countable($candidateNGrams) ? count($candidateNGrams) : 0, 1);
         $f1Score = ($recall + $precision > 0)
             ? 2 * ($recall * $precision) / ($recall + $precision)
             : 0;
 
-        $results = new EvaluationResults(
+        return new EvaluationResults(
             $this->getMetricName(),
             [
                 'recall' => round($recall, 2),
@@ -35,8 +35,6 @@ class ROUGE extends AbstractStringComparisonMetric
                 'f1' => round($f1Score, 2),
             ]
         );
-
-        return $results;
     }
 
     public function getMetricName(): string

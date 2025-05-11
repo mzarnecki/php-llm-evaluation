@@ -1,12 +1,12 @@
 <?php
 
-namespace src\llmEvaluation\criteria;
+namespace LlmEvaluation\criteria;
 
 use src\criteria\claude\AbstractClaudeAPIClient;
 
 class CriteriaEvaluator extends AbstractClaudeAPIClient
 {
-    private string $model = 'claude-3-5-sonnet-20241022';
+    private const MODEL = 'claude-3-5-sonnet-20241022';
 
     public function evaluate(string $prompt, string $answer): string
     {
@@ -14,7 +14,7 @@ class CriteriaEvaluator extends AbstractClaudeAPIClient
         $response = $this->request(
             $prompt,
             'messages',
-            $this->model
+            self::MODEL
         );
 
         return $response['content'][0]['text'];

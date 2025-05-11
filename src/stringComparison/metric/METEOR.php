@@ -1,31 +1,25 @@
 <?php
 
-namespace src\llmEvaluation\stringComparison\metric;
+namespace LlmEvaluation\stringComparison\metric;
 
-use src\llmEvaluation\EvaluationResults;
+use LlmEvaluation\EvaluationResults;
 
 class METEOR extends AbstractStringComparisonMetric
 {
-    /**
-     * Weight of precision in the harmonic mean (typical value: 0.9).
-     */
-    private float $alpha;
-
-    /**
-     * Exponent of the fragmentation penalty (typical value: 3.0).
-     */
-    private float $beta;
-
-    /**
-     * Scaling factor of the fragmentation penalty (typical value: 0.5).
-     */
-    private float $gamma;
-
-    public function __construct(float $alpha = 0.9, float $beta = 3.0, float $gamma = 0.5)
-    {
-        $this->alpha = $alpha;
-        $this->beta = $beta;
-        $this->gamma = $gamma;
+    public function __construct(
+        /**
+         * Weight of precision in the harmonic mean (typical value: 0.9).
+         */
+        private readonly float $alpha = 0.9,
+        /**
+         * Exponent of the fragmentation penalty (typical value: 3.0).
+         */
+        private readonly float $beta = 3.0,
+        /**
+         * Scaling factor of the fragmentation penalty (typical value: 0.5).
+         */
+        private readonly float $gamma = 0.5
+    ) {
     }
 
     public function getMetricName(): string
@@ -66,7 +60,7 @@ class METEOR extends AbstractStringComparisonMetric
 
         // 5. Fragmentation penalty (chunk count based)
         $chunks = $this->countChunks($refTokens, $candTokens);
-        $penalty = $this->gamma * \pow($chunks / $matches, $this->beta);
+        $penalty = $this->gamma * ($chunks / $matches) ** $this->beta;
 
         // 6. Final score
         $score = round($fMean * (1.0 - $penalty), 2);
@@ -133,10 +127,12 @@ class METEOR extends AbstractStringComparisonMetric
         $prevPos = -2; // ensure first match starts a new chunk
 
         foreach ($candTokens as $token) {
-            if (! isset($positionMap[$token]) || \count($positionMap[$token]) === 0) {
+            if (! isset($positionMap[$token])) {
                 continue;
             }
-
+            if ($positionMap[$token] === []) {
+                continue;
+            }
             $pos = \array_shift($positionMap[$token]); // first unused occurrence
 
             if ($pos !== $prevPos + 1) {
@@ -154,7 +150,10 @@ class METEOR extends AbstractStringComparisonMetric
     private function fMean(float $precision, float $recall): float
     {
         // Avoid division by zero
-        if ($precision === 0.0 || $recall === 0.0) {
+        if ($precision === 0.0) {
+            return 0.0;
+        }
+        if ($recall === 0.0) {
             return 0.0;
         }
 

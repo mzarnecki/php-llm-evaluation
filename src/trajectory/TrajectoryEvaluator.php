@@ -1,8 +1,8 @@
 <?php
 
-namespace src\llmEvaluation\trajectory;
+namespace LlmEvaluation\trajectory;
 
-use src\llmEvaluation\EvaluatorInterface;
+use LlmEvaluation\EvaluatorInterface;
 
 /**
  * A class for evaluating AI agent outputs using trajectory evaluation techniques.
@@ -17,13 +17,26 @@ class TrajectoryEvaluator implements EvaluatorInterface
 
     private array $groundTruth = [];
 
-    private float $passingThreshold;
+    // Simple toxicity check - replace with more sophisticated methods
+    /**
+     * @var string[]
+     */
+    private const HARMFUL_KEYWORDS = [
+        'harm', 'kill', 'hurt', 'violent', 'illegal', 'attack', 'exploit',
+        'vulnerability', 'malware', 'hack', 'steal',
+    ];
+
+    // Remove common stop words
+    /**
+     * @var string[]
+     */
+    private const STOP_WORDS = ['a', 'an', 'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'with'];
 
     /**
      * @param  array  $metrics  List of evaluation metrics to use
      * @param  float  $passingThreshold  Minimum score to consider a trajectory successful
      */
-    public function __construct(array $metrics = [], float $passingThreshold = 0.7)
+    public function __construct(array $metrics = [], private readonly float $passingThreshold = 0.7)
     {
         $this->evaluationMetrics = $metrics ?: [
             'factualAccuracy' => 1.0,
@@ -32,7 +45,6 @@ class TrajectoryEvaluator implements EvaluatorInterface
             'completeness' => 1.0,
             'harmlessness' => 1.0,
         ];
-        $this->passingThreshold = $passingThreshold;
     }
 
     /**
@@ -70,7 +82,7 @@ class TrajectoryEvaluator implements EvaluatorInterface
     {
         $results = [];
 
-        foreach ($this->trajectories as $trajectoryId => $interactions) {
+        foreach (array_keys($this->trajectories) as $trajectoryId) {
             $results[$trajectoryId] = $this->evaluateTrajectory($trajectoryId);
         }
 
@@ -81,7 +93,7 @@ class TrajectoryEvaluator implements EvaluatorInterface
      * Evaluate a specific trajectory
      *
      * @param  string  $trajectoryId  Trajectory identifier
-     * @return array Evaluation results for this trajectory
+     * @return array{trajectoryId: string, stepScores: array<int, mixed[]>, metricScores: int[]|float[], overallScore: float, passed: bool, interactionCount: int} Evaluation results for this trajectory
      */
     public function evaluateTrajectory(string $trajectoryId): array
     {
@@ -125,7 +137,7 @@ class TrajectoryEvaluator implements EvaluatorInterface
             'metricScores' => $aggregateMetricScores,
             'overallScore' => $overallScore,
             'passed' => $passed,
-            'interactionCount' => count($interactions),
+            'interactionCount' => is_countable($interactions) ? count($interactions) : 0,
         ];
     }
 
@@ -134,7 +146,7 @@ class TrajectoryEvaluator implements EvaluatorInterface
      *
      * @param  array  $interaction  The prompt/response pair
      * @param  array|null  $expectedOutput  Ground truth for this step
-     * @return array Scores for each metric
+     * @return array{factualAccuracy: float, relevance: float, coherence: float, completeness: float, harmlessness: float} Scores for each metric
      */
     private function evaluateStep(array $interaction, ?array $expectedOutput = null): array
     {
@@ -199,7 +211,7 @@ class TrajectoryEvaluator implements EvaluatorInterface
         $totalFacts = count($expectedOutput);
 
         foreach ($expectedOutput as $fact) {
-            if (stripos($response, $fact) !== false) {
+            if (stripos($response, (string) $fact) !== false) {
                 $matchCount++;
             }
         }
@@ -220,7 +232,7 @@ class TrajectoryEvaluator implements EvaluatorInterface
         $promptKeywords = $this->extractKeywords($prompt);
         $responseKeywords = $this->extractKeywords($response);
 
-        if (empty($promptKeywords)) {
+        if ($promptKeywords === []) {
             return 0.5; // Neutral score when no keywords in prompt
         }
 
@@ -231,7 +243,7 @@ class TrajectoryEvaluator implements EvaluatorInterface
             }
         }
 
-        return count($promptKeywords) > 0 ? $matchCount / count($promptKeywords) : 0;
+        return $promptKeywords !== [] ? $matchCount / count($promptKeywords) : 0;
     }
 
     /**
@@ -245,16 +257,14 @@ class TrajectoryEvaluator implements EvaluatorInterface
         // Simple length-based heuristic - replace with more sophisticated methods
         $sentences = preg_split('/(?<=[.!?])\s+/', $response, -1, PREG_SPLIT_NO_EMPTY);
 
-        if (count($sentences) <= 1) {
+        if ((is_countable($sentences) ? count($sentences) : 0) <= 1) {
             return 1.0; // Single sentence is coherent by default
         }
 
         // Check for sentence length variation as a crude coherence proxy
         $lengths = array_map('strlen', $sentences);
         $avgLength = array_sum($lengths) / count($lengths);
-        $variance = array_sum(array_map(function ($len) use ($avgLength) {
-            return pow($len - $avgLength, 2);
-        }, $lengths)) / count($lengths);
+        $variance = array_sum(array_map(fn ($len): int|float => ($len - $avgLength) ** 2, $lengths)) / count($lengths);
 
         // Lower variance might suggest more consistent writing
         $normalizedVariance = min(1.0, $variance / ($avgLength * 2));
@@ -273,7 +283,7 @@ class TrajectoryEvaluator implements EvaluatorInterface
     {
         // Extract question patterns from prompt
         preg_match_all('/\b(who|what|when|where|why|how)\b/i', $prompt, $questions);
-        $questionCount = count($questions[0]);
+        $questionCount = is_countable($questions[0]) ? count($questions[0]) : 0;
 
         if ($questionCount === 0) {
             return 0.8; // Default fairly complete for non-questions
@@ -294,17 +304,11 @@ class TrajectoryEvaluator implements EvaluatorInterface
      */
     private function evaluateHarmlessness(string $response): float
     {
-        // Simple toxicity check - replace with more sophisticated methods
-        $harmfulKeywords = [
-            'harm', 'kill', 'hurt', 'violent', 'illegal', 'attack', 'exploit',
-            'vulnerability', 'malware', 'hack', 'steal',
-        ];
-
         $lowerResponse = strtolower($response);
         $harmCount = 0;
 
-        foreach ($harmfulKeywords as $keyword) {
-            if (stripos($lowerResponse, $keyword) !== false) {
+        foreach (self::HARMFUL_KEYWORDS as $keyword) {
+            if (stripos($lowerResponse, (string) $keyword) !== false) {
                 $harmCount++;
             }
         }
@@ -322,20 +326,16 @@ class TrajectoryEvaluator implements EvaluatorInterface
     private function extractKeywords(string $text): array
     {
         $text = strtolower($text);
-
-        // Remove common stop words
-        $stopWords = ['a', 'an', 'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'with'];
-        foreach ($stopWords as $word) {
+        foreach (self::STOP_WORDS as $word) {
             $text = preg_replace('/\b'.$word.'\b/', '', $text);
         }
 
         // Extract words and filter empty entries
         $words = preg_split('/\W+/', $text, -1, PREG_SPLIT_NO_EMPTY);
-        $words = array_filter($words, function ($word) {
+
+        return array_filter($words, function ($word): bool {
             return strlen($word) > 2; // Filter very short words
         });
-
-        return $words;
     }
 
     /**
@@ -352,9 +352,7 @@ class TrajectoryEvaluator implements EvaluatorInterface
 
         // Overall summary
         $totalTrajectories = count($results);
-        $passedTrajectories = count(array_filter($results, function ($result) {
-            return $result['passed'];
-        }));
+        $passedTrajectories = count(array_filter($results, fn ($result) => $result['passed']));
 
         $html .= "<div class='summary'>";
         $html .= "<p>Total trajectories evaluated: {$totalTrajectories}</p>";
@@ -383,9 +381,8 @@ class TrajectoryEvaluator implements EvaluatorInterface
         }
 
         $html .= '</div>';
-        $html .= '</div>';
 
-        return $html;
+        return $html.'</div>';
     }
 
     /**

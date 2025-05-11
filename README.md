@@ -105,7 +105,7 @@ Results:
 ### Trajectory evaluation example
 
 ```php
-     use src\llmEvaluation\trajectory\TrajectoryEvaluator;$evaluator = new TrajectoryEvaluator([
+     use LlmEvaluation\trajectory\TrajectoryEvaluator;$evaluator = new TrajectoryEvaluator([
          'factualAccuracy' => 2.0,  // Double weight for factual accuracy
          'relevance' => 1.0,
          'coherence' => 1.0,

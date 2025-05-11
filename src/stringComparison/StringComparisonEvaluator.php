@@ -1,11 +1,11 @@
 <?php
 
-namespace src\llmEvaluation\stringComparison;
+namespace LlmEvaluation\stringComparison;
 
-use src\llmEvaluation\EvaluationResults;
-use src\llmEvaluation\stringComparison\metric\BLEU;
-use src\llmEvaluation\stringComparison\metric\METEOR;
-use src\llmEvaluation\stringComparison\metric\ROUGE;
+use LlmEvaluation\EvaluationResults;
+use LlmEvaluation\stringComparison\metric\BLEU;
+use LlmEvaluation\stringComparison\metric\METEOR;
+use LlmEvaluation\stringComparison\metric\ROUGE;
 
 class StringComparisonEvaluator
 {

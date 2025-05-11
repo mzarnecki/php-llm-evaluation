@@ -1,6 +1,6 @@
 <?php
 
-namespace src\llmEvaluation;
+namespace LlmEvaluation;
 
 interface EvaluatorInterface
 {

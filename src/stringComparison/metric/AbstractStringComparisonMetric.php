@@ -1,8 +1,8 @@
 <?php
 
-namespace src\llmEvaluation\stringComparison\metric;
+namespace LlmEvaluation\stringComparison\metric;
 
-use src\llmEvaluation\EvaluationResults;
+use LlmEvaluation\EvaluationResults;
 
 abstract class AbstractStringComparisonMetric
 {
@@ -13,10 +13,11 @@ abstract class AbstractStringComparisonMetric
 
     abstract public function getMetricName(): string;
 
-    protected function getNGrams($words, $n)
+    protected function getNGrams(array $words, int $n): array
     {
         $nGrams = [];
-        for ($i = 0; $i <= count($words) - $n; $i++) {
+        $wordsCount = count($words);
+        for ($i = 0; $i <= $wordsCount - $n; $i++) {
             $nGrams[] = implode(' ', array_slice($words, $i, $n));
         }
 

@@ -2,8 +2,8 @@
 
 namespace tests\Unit;
 
+use LlmEvaluation\trajectory\TrajectoryEvaluator;
 use PHPUnit\Framework\TestCase;
-use src\llmEvaluation\trajectory\TrajectoryEvaluator;
 
 class TrajectoryEvaluatorTest extends TestCase
 {

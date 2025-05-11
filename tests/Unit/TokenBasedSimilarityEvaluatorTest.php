@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace tests\Unit;
 
+use LlmEvaluation\stringComparison\metric\BLEU;
+use LlmEvaluation\stringComparison\metric\METEOR;
+use LlmEvaluation\stringComparison\metric\ROUGE;
+use LlmEvaluation\stringComparison\StringComparisonEvaluator;
 use PHPUnit\Framework\TestCase;
-use src\llmEvaluation\stringComparison\metric\BLEU;
-use src\llmEvaluation\stringComparison\metric\METEOR;
-use src\llmEvaluation\stringComparison\metric\ROUGE;
-use src\llmEvaluation\stringComparison\StringComparisonEvaluator;
 
 class TokenBasedSimilarityEvaluatorTest extends TestCase
 {

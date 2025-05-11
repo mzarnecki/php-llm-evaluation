@@ -1,6 +1,6 @@
 <?php
 
-namespace src\llmEvaluation\criteria;
+namespace LlmEvaluation\criteria;
 
 use Dotenv\Dotenv;
 use GuzzleHttp\Client;
@@ -56,10 +56,10 @@ abstract class AbstractClaudeAPIClient
                 ],
             ]);
 
-            $responseData = json_decode($response->getBody()->getContents(), true);
+            $responseData = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
 
             // Log the response for debugging
-            error_log(json_encode($responseData).PHP_EOL);
+            error_log(json_encode($responseData, JSON_THROW_ON_ERROR).PHP_EOL);
 
             return $responseData ?? [];
         } catch (GuzzleException $e) {

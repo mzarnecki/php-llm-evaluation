@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace src\llmEvaluation\stringComparison\metric;
+namespace LlmEvaluation\stringComparison\metric;
 
 use GuzzleHttp\Client;
+use LlmEvaluation\EvaluationResults;
 use RuntimeException;
-use src\llmEvaluation\EvaluationResults;
 
 /**
  * Pure‑PHP implementation of **BERTScore** (Zhang et al., 2020) that relies on
@@ -37,15 +37,15 @@ use src\llmEvaluation\EvaluationResults;
  */
 final class BERTScore extends AbstractStringComparisonMetric
 {
-    private string $apiUrl;
+    private readonly string $apiUrl;
 
-    private string $apiToken;
+    private readonly string $apiToken;
 
-    private Client $http;
+    private readonly Client $http;
 
     /**
-     * @param  string  $apiToken  HF personal access token ("read" scope)
-     * @param  string|null  $model  HF model id with `feature-extraction`
+     * @param  string|null  $apiToken  HF personal access token ("read" scope)
+     * @param  string  $model  HF model id with `feature-extraction`
      */
     public function __construct(?string $apiToken = null, string $model = 'bert-base-uncased')
     {
@@ -75,9 +75,16 @@ final class BERTScore extends AbstractStringComparisonMetric
     public function calculate(string $reference, string $candidate, int $n = 1): EvaluationResults
     {
         $refEmb = $this->embed($reference); // [n][d]
-        $candEmb = $this->embed($candidate); // [m][d]
-
-        if ($refEmb === [] || $candEmb === []) {
+        $candEmb = $this->embed($candidate);
+        // [m][d]
+        if ($refEmb === []) {
+            return new EvaluationResults($this->getMetricName(), [
+                'precision' => 0.0,
+                'recall' => 0.0,
+                'note' => 'Empty embedding; maybe text too short?',
+            ]);
+        }
+        if ($candEmb === []) {
             return new EvaluationResults($this->getMetricName(), [
                 'precision' => 0.0,
                 'recall' => 0.0,
@@ -136,8 +143,8 @@ final class BERTScore extends AbstractStringComparisonMetric
         $n = \count($refEmb);
 
         // Precompute vector norms
-        $candNorm = array_map(fn (array $v) => $this->norm($v), $candEmb);
-        $refNorm = array_map(fn (array $v) => $this->norm($v), $refEmb);
+        $candNorm = array_map(fn (array $v): float => $this->norm($v), $candEmb);
+        $refNorm = array_map(fn (array $v): float => $this->norm($v), $refEmb);
 
         $precisionSum = 0.0;
         for ($i = 0; $i < $m; $i++) {
