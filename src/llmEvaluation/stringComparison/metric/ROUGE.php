@@ -35,6 +35,7 @@ class ROUGE extends AbstractStringComparisonMetric
                 'f1' => round($f1Score, 2),
             ]
         );
+
         return $results;
     }
 

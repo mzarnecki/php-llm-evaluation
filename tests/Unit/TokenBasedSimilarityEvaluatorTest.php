@@ -42,7 +42,7 @@ class TokenBasedSimilarityEvaluatorTest extends TestCase
 
     public function testCalculateMeteor(): void
     {
-        $reference = "The quick brown fox jumps over the lazy dog";
+        $reference = 'The quick brown fox jumps over the lazy dog';
         $candidate = 'The quick brown dog jumps over the lazy fox';
 
         $results = $this->getSut()->calculateMETEOR($reference, $candidate);

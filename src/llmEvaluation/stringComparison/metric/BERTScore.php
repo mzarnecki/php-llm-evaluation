@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace src\llmEvaluation\stringComparison\metric;
 
-use src\llmEvaluation\EvaluationResults;
 use GuzzleHttp\Client;
 use RuntimeException;
+use src\llmEvaluation\EvaluationResults;
 
 /**
  * Pure‑PHP implementation of **BERTScore** (Zhang et al., 2020) that relies on
@@ -38,12 +38,14 @@ use RuntimeException;
 final class BERTScore extends AbstractStringComparisonMetric
 {
     private string $apiUrl;
+
     private string $apiToken;
+
     private Client $http;
 
     /**
-     * @param string      $apiToken  HF personal access token ("read" scope)
-     * @param string|null $model     HF model id with `feature-extraction`
+     * @param  string  $apiToken  HF personal access token ("read" scope)
+     * @param  string|null  $model  HF model id with `feature-extraction`
      */
     public function __construct(?string $apiToken = null, string $model = 'bert-base-uncased')
     {
@@ -51,12 +53,12 @@ final class BERTScore extends AbstractStringComparisonMetric
         if ($this->apiToken === '') {
             throw new RuntimeException('Hugging Face API token missing. Pass it to the constructor or set HF_TOKEN env‑var.');
         }
-        $this->apiUrl = 'https://api-inference.huggingface.co/models/' . $model;
-        $this->http   = new Client([
+        $this->apiUrl = 'https://api-inference.huggingface.co/models/'.$model;
+        $this->http = new Client([
             'headers' => [
-                'Authorization' => 'Bearer ' . $this->apiToken,
-                'Content-Type'  => 'application/json',
-                'Accept'        => 'application/json',
+                'Authorization' => 'Bearer '.$this->apiToken,
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
             ],
             'timeout' => 60,
         ]);
@@ -72,14 +74,14 @@ final class BERTScore extends AbstractStringComparisonMetric
      */
     public function calculate(string $reference, string $candidate, int $n = 1): EvaluationResults
     {
-        $refEmb  = $this->embed($reference); // [n][d]
+        $refEmb = $this->embed($reference); // [n][d]
         $candEmb = $this->embed($candidate); // [m][d]
 
         if ($refEmb === [] || $candEmb === []) {
-            return new EvaluationResults($this->getMetricName(),  [
+            return new EvaluationResults($this->getMetricName(), [
                 'precision' => 0.0,
-                'recall'    => 0.0,
-                'note'      => 'Empty embedding; maybe text too short?',
+                'recall' => 0.0,
+                'note' => 'Empty embedding; maybe text too short?',
             ]);
         }
 
@@ -89,7 +91,7 @@ final class BERTScore extends AbstractStringComparisonMetric
         return new EvaluationResults($this->getMetricName(), [
             'f1' => $f1,
             'precision' => $precision,
-            'recall'    => $recall,
+            'recall' => $recall,
         ]);
     }
 
@@ -99,6 +101,7 @@ final class BERTScore extends AbstractStringComparisonMetric
 
     /**
      * Calls the HF feature‑extraction API and returns an array of token vectors.
+     *
      * @return float[][] Matrix shape = [tokens][hidden]
      */
     private function embed(string $text): array
@@ -111,18 +114,20 @@ final class BERTScore extends AbstractStringComparisonMetric
         ]);
 
         if ($resp->getStatusCode() !== 200) {
-            throw new RuntimeException('HF API error: ' . $resp->getBody());
+            throw new RuntimeException('HF API error: '.$resp->getBody());
         }
 
         $data = json_decode((string) $resp->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
         // Response structure: [1][tokens][hidden_size]
         return isset($data[0]) && is_array($data[0]) ? $data[0] : [];
     }
 
     /**
      * Computes precision and recall following BERTScore definition.
-     * @param float[][] $candEmb [m][d]
-     * @param float[][] $refEmb  [n][d]
+     *
+     * @param  float[][]  $candEmb  [m][d]
+     * @param  float[][]  $refEmb  [n][d]
      * @return array{0: float, 1: float} [precision, recall]
      */
     private function precisionRecall(array $candEmb, array $refEmb): array
@@ -131,8 +136,8 @@ final class BERTScore extends AbstractStringComparisonMetric
         $n = \count($refEmb);
 
         // Precompute vector norms
-        $candNorm = array_map(fn(array $v) => $this->norm($v), $candEmb);
-        $refNorm  = array_map(fn(array $v) => $this->norm($v), $refEmb);
+        $candNorm = array_map(fn (array $v) => $this->norm($v), $candEmb);
+        $refNorm = array_map(fn (array $v) => $this->norm($v), $refEmb);
 
         $precisionSum = 0.0;
         for ($i = 0; $i < $m; $i++) {
@@ -170,6 +175,7 @@ final class BERTScore extends AbstractStringComparisonMetric
         for ($i = 0; $i < $len; $i++) {
             $sum += $a[$i] * $b[$i];
         }
+
         return $sum;
     }
 
@@ -179,6 +185,7 @@ final class BERTScore extends AbstractStringComparisonMetric
         foreach ($v as $x) {
             $sum += $x * $x;
         }
+
         return \sqrt($sum);
     }
 }

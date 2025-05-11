@@ -24,7 +24,7 @@ class METEOR extends AbstractStringComparisonMetric
     public function __construct(float $alpha = 0.9, float $beta = 3.0, float $gamma = 0.5)
     {
         $this->alpha = $alpha;
-        $this->beta  = $beta;
+        $this->beta = $beta;
         $this->gamma = $gamma;
     }
 
@@ -39,7 +39,7 @@ class METEOR extends AbstractStringComparisonMetric
     public function calculate(string $reference, string $candidate, int $n = 1): EvaluationResults
     {
         // 1. Tokenise (simple lowercase + whitespace split for now)
-        $refTokens  = $this->tokenize($reference);
+        $refTokens = $this->tokenize($reference);
         $candTokens = $this->tokenize($candidate);
 
         // 2. Count *exact* unigram matches (multiset intersection)
@@ -51,21 +51,21 @@ class METEOR extends AbstractStringComparisonMetric
                 [
                     'score' => 0.0,
                     'precision' => 0.0,
-                    'recall'    => 0.0,
-                    'chunks'    => 0,
+                    'recall' => 0.0,
+                    'chunks' => 0,
                 ]
             );
         }
 
         // 3. Precision / recall
         $precision = $matches / \count($candTokens);
-        $recall    = $matches / \count($refTokens);
+        $recall = $matches / \count($refTokens);
 
         // 4. Harmonic mean (called F‑mean in the paper)
         $fMean = $this->fMean($precision, $recall);
 
         // 5. Fragmentation penalty (chunk count based)
-        $chunks  = $this->countChunks($refTokens, $candTokens);
+        $chunks = $this->countChunks($refTokens, $candTokens);
         $penalty = $this->gamma * \pow($chunks / $matches, $this->beta);
 
         // 6. Final score
@@ -76,10 +76,10 @@ class METEOR extends AbstractStringComparisonMetric
             [
                 'score' => $score,
                 'precision' => $precision,
-                'recall'    => $recall,
-                'chunks'    => $chunks,
-                'penalty'   => $penalty,
-                'fMean'     => $fMean,
+                'recall' => $recall,
+                'chunks' => $chunks,
+                'penalty' => $penalty,
+                'fMean' => $fMean,
             ]
         );
     }
@@ -133,7 +133,7 @@ class METEOR extends AbstractStringComparisonMetric
         $prevPos = -2; // ensure first match starts a new chunk
 
         foreach ($candTokens as $token) {
-            if (!isset($positionMap[$token]) || \count($positionMap[$token]) === 0) {
+            if (! isset($positionMap[$token]) || \count($positionMap[$token]) === 0) {
                 continue;
             }
 

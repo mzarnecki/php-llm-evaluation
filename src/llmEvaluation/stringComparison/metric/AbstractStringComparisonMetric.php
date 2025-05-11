@@ -7,10 +7,7 @@ use src\llmEvaluation\EvaluationResults;
 abstract class AbstractStringComparisonMetric
 {
     /**
-     * @param string $reference
-     * @param string $candidate
-     * @param int $n "N" for N-Gram
-     * @return EvaluationResults
+     * @param  int  $n  "N" for N-Gram
      */
     abstract public function calculate(string $reference, string $candidate, int $n = 1): EvaluationResults;
 
