@@ -1,6 +1,6 @@
 <?php
 
-namespace LlmEvaluation\criteria;
+namespace LlmEvaluation\criteria\claude;
 
 use Dotenv\Dotenv;
 use GuzzleHttp\Client;
@@ -16,7 +16,7 @@ abstract class AbstractClaudeAPIClient
     public function __construct()
     {
         // Load environment variables
-        $dotenv = Dotenv::createImmutable(__DIR__.'/../../');
+        $dotenv = Dotenv::createImmutable(__DIR__.'/../../../');
         $dotenv->load();
 
         // Get API key from environment
@@ -57,9 +57,6 @@ abstract class AbstractClaudeAPIClient
             ]);
 
             $responseData = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
-
-            // Log the response for debugging
-            error_log(json_encode($responseData, JSON_THROW_ON_ERROR).PHP_EOL);
 
             return $responseData ?? [];
         } catch (GuzzleException $e) {
