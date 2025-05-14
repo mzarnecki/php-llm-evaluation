@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace LlmEvaluation\criteria\openai;
@@ -13,7 +14,7 @@ abstract class AbstractGPTAPIClient
 
     public function __construct()
     {
-        $dotenv = Dotenv::createImmutable(__DIR__ . '/../../../');
+        $dotenv = Dotenv::createImmutable(__DIR__.'/../../../');
         $dotenv->load();
         $this->client = OpenAI::Client($_ENV['OPENAI_KEY']);
     }

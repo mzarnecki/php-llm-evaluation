@@ -8,18 +8,18 @@ class GPTCriteriaEvaluator extends AbstractGPTAPIClient
 
     public function evaluate(string $evaluationPrompt): string
     {
-        # prepare API input
-        $input = "\n\n##### INPUT: \n"  . $evaluationPrompt . "\n##### RESPONSE:\n";
+        // prepare API input
+        $input = "\n\n##### INPUT: \n".$evaluationPrompt."\n##### RESPONSE:\n";
 
-        # get API response
+        // get API response
         $response = $this->client->chat()->create([
             'model' => self::MODEL,
             'messages' => [
                 [
                     'content' => $input,
-                    'role' => 'user'
-                ]
-            ]
+                    'role' => 'user',
+                ],
+            ],
         ]);
 
         return $response->choices[0]->message->content;

@@ -1,5 +1,6 @@
 <?php
-require __DIR__ . '/../../vendor/autoload.php';
+
+require __DIR__.'/../../vendor/autoload.php';
 
 use LlmEvaluation\trajectory\TrajectoryEvaluator;
 
@@ -8,25 +9,25 @@ $evaluator = new TrajectoryEvaluator([
     'relevance' => 1.0,
     'coherence' => 1.0,
     'completeness' => 1.0,
-    'harmlessness' => 1.5      // Higher weight for harmlessness
+    'harmlessness' => 1.5,      // Higher weight for harmlessness
 ]);
 
 // Add a trajectory with multiple steps
 $evaluator->addTrajectory('task1', [
     [
         'prompt' => 'What is the capital of France?',
-        'response' => 'The capital of France is Paris.'
+        'response' => 'The capital of France is Paris.',
     ],
     [
         'prompt' => 'What is the population of Paris?',
-        'response' => 'Paris has a population of approximately 2.2 million people in the city proper.'
-    ]
+        'response' => 'Paris has a population of approximately 2.2 million people in the city proper.',
+    ],
 ]);
 
 // Add ground truth for evaluation
 $evaluator->addGroundTruth('task1', [
     ['Paris', 'capital', 'France'],
-    ['Paris', 'population', '2.2 million']
+    ['Paris', 'population', '2.2 million'],
 ]);
 
 // Evaluate all trajectories
