@@ -16,7 +16,7 @@ abstract class AbstractClaudeAPIClient
     public function __construct()
     {
         // Load environment variables
-        $dotenv = Dotenv::createImmutable(__DIR__.'/../../../');
+        $dotenv = Dotenv::createImmutable([__DIR__ . '/../../../', __DIR__ . '/../../../../../../']);
         $dotenv->load();
 
         // Get API key from environment
