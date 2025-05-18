@@ -36,10 +36,10 @@ Trajectory evaluator cores how closely a language-model-generated answer follows
 It compares each intermediate step of the model’s output against a reference chain-of-thought,
 computing metrics such as step-level ROUGE overlap, accumulated divergence, and error propagation.
 This lets you quantify whether an LLM is merely reaching the right conclusion or genuinely reasoning in the desired way—ideal for debugging,
-fine-tuning, and safety audits where process integrity matters as much as the end resul
+fine-tuning, and safety audits where process integrity matters as much as the end result.
 
 ### Criteria evaluator
-Criteria valuator passes prompt and generated answer to GPT-4o or Claude model and ask for 1-5 points evaluation in criteria:
+Criteria evaluator passes prompt and generated answer to GPT-4o or Claude model and ask for 1-5 points evaluation in criteria:
 - correctness: Is the answer accurate, and free of mistakes?
 - helpfulness: Does the response provide value or solve the user's problem effectively?
 - relevance: Does the answer address the question accurately?
@@ -159,14 +159,12 @@ Results:
       "stepScores":[
          {
             "factualAccuracy":1,
-            "relevance":0.6666666666666666,
             "coherence":1,
             "completeness":1,
             "harmlessness":1
          },
          {
             "factualAccuracy":1,
-            "relevance":0.6666666666666666,
             "coherence":1,
             "completeness":1,
             "harmlessness":1
@@ -174,7 +172,6 @@ Results:
       ],
       "metricScores":{
          "factualAccuracy":1,
-         "relevance":0.6666666666666666,
          "coherence":1,
          "completeness":1,
          "harmlessness":1

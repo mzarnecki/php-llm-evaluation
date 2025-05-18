@@ -21,8 +21,8 @@ class ROUGE extends AbstractStringComparisonMetric
             }
         }
 
-        $recall = $matches / max(is_countable($referenceNGrams) ? count($referenceNGrams) : 0, 1);
-        $precision = $matches / max(is_countable($candidateNGrams) ? count($candidateNGrams) : 0, 1);
+        $recall = $matches / max(count($referenceNGrams), 1);
+        $precision = $matches / max(count($candidateNGrams), 1);
         $f1Score = ($recall + $precision > 0)
             ? 2 * ($recall * $precision) / ($recall + $precision)
             : 0;

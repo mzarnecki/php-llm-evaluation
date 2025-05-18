@@ -6,7 +6,7 @@ class GPTCriteriaEvaluator extends AbstractGPTAPIClient
 {
     private const MODEL = 'o3';
 
-    public function evaluate(string $evaluationPrompt): string
+    public function evaluate(string $evaluationPrompt): ?string
     {
         // prepare API input
         $input = "\n\n##### INPUT: \n".$evaluationPrompt."\n##### RESPONSE:\n";

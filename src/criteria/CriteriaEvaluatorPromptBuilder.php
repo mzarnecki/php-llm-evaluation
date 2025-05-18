@@ -4,6 +4,9 @@ namespace LlmEvaluation\criteria;
 
 class CriteriaEvaluatorPromptBuilder
 {
+    /**
+     * @var string[]
+     */
     private array $criteria = [];
 
     public function getEvaluationPrompt(string $question, string $answer): string
@@ -23,7 +26,10 @@ class CriteriaEvaluatorPromptBuilder
 
         $exampleJSON = [];
         foreach (array_keys($allCriteria) as $criterion) {
-            $exampleJSON[] = "$criterion: ".random_int(0, 5);
+            if (! in_array($criterion, $this->criteria)) {
+                continue;
+            }
+            $exampleJSON[] = "$criterion: 3";
         }
 
         return "You are a helpful assistant that evaluates the quality of an answer based on the following criteria:\n"
@@ -47,7 +53,7 @@ class CriteriaEvaluatorPromptBuilder
 
     public function addAllCriterion(): self
     {
-        $this->criteria[] = array_keys($this->getAllCriteria());
+        $this->criteria = array_keys($this->getAllCriteria());
 
         return $this;
     }

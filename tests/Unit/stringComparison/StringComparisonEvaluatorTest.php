@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace tests\Unit;
+namespace test\tests\Unit\stringComparison;
 
 use LlmEvaluation\stringComparison\StringComparisonEvaluator;
 use PHPUnit\Framework\TestCase;
 
-class TokenBasedSimilarityEvaluatorTest extends TestCase
+class StringComparisonEvaluatorTest extends TestCase
 {
     public function testCalculateRouge(): void
     {

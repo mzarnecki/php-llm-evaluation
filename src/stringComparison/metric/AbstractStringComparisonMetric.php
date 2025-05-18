@@ -11,8 +11,10 @@ abstract class AbstractStringComparisonMetric
      */
     abstract public function calculate(string $reference, string $candidate, int $n = 1): EvaluationResults;
 
-    abstract public function getMetricName(): string;
-
+    /**
+     * @param  string[]  $words
+     * @return string[]
+     */
     protected function getNGrams(array $words, int $n): array
     {
         $nGrams = [];

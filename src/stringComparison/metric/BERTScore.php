@@ -175,6 +175,10 @@ final class BERTScore extends AbstractStringComparisonMetric
         return [$precision, $recall];
     }
 
+    /**
+     * @param  float[]  $a
+     * @param  float[]  $b
+     */
     private function dot(array $a, array $b): float
     {
         $sum = 0.0;
@@ -186,6 +190,9 @@ final class BERTScore extends AbstractStringComparisonMetric
         return $sum;
     }
 
+    /**
+     * @param  float[]  $v
+     */
     private function norm(array $v): float
     {
         $sum = 0.0;

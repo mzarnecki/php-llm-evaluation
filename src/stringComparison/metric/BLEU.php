@@ -6,7 +6,7 @@ use LlmEvaluation\EvaluationResults;
 
 class BLEU extends AbstractStringComparisonMetric
 {
-    public function calculate(string $reference, string $candidate, $n = 1): EvaluationResults
+    public function calculate(string $reference, string $candidate, int $n = 1): EvaluationResults
     {
         $candidateWords = explode(' ', $candidate);
         $referenceWords = explode(' ', $reference);
@@ -24,7 +24,7 @@ class BLEU extends AbstractStringComparisonMetric
                     $matches++;
                 }
             }
-            $nGramMatches[$i] = $matches / max(is_countable($candidateNGrams) ? count($candidateNGrams) : 0, 1);
+            $nGramMatches[$i] = $matches / max(count($candidateNGrams), 1);
         }
 
         $precision = array_product($nGramMatches);
@@ -39,7 +39,7 @@ class BLEU extends AbstractStringComparisonMetric
         );
     }
 
-    public function getMetricName(): string
+    protected function getMetricName(): string
     {
         return 'BLEU';
     }

@@ -22,11 +22,6 @@ class METEOR extends AbstractStringComparisonMetric
     ) {
     }
 
-    public function getMetricName(): string
-    {
-        return 'METEOR';
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -84,7 +79,9 @@ class METEOR extends AbstractStringComparisonMetric
 
     /**
      * Lower‑cases and splits a string on whitespace (UTF‑8 safe).
-     * Override for custom tokenisation / stemming.
+     * Override for custom tokenization / stemming.
+     *
+     * @return string[]
      */
     protected function tokenize(string $text): array
     {
@@ -96,6 +93,9 @@ class METEOR extends AbstractStringComparisonMetric
 
     /**
      * Multiset intersection size (number of matching unigrams).
+     *
+     * @param  string[]  $refTokens
+     * @param  string[]  $candTokens
      */
     private function countMatches(array $refTokens, array $candTokens): int
     {
@@ -114,6 +114,9 @@ class METEOR extends AbstractStringComparisonMetric
 
     /**
      * Counts the number of *contiguous* matching chunks in the candidate→reference alignment.
+     *
+     * @param  string[]  $refTokens
+     * @param  string[]  $candTokens
      */
     private function countChunks(array $refTokens, array $candTokens): int
     {
@@ -130,12 +133,12 @@ class METEOR extends AbstractStringComparisonMetric
             if (! isset($positionMap[$token])) {
                 continue;
             }
-            if ($positionMap[$token] === []) {
+            if ($positionMap[$token] == []) {
                 continue;
             }
-            $pos = \array_shift($positionMap[$token]); // first unused occurrence
+            $pos = array_shift($positionMap[$token]); // first unused occurrence
 
-            if ($pos !== $prevPos + 1) {
+            if ($pos != $prevPos + 1) {
                 $chunks++;
             }
             $prevPos = $pos;
@@ -158,5 +161,10 @@ class METEOR extends AbstractStringComparisonMetric
         }
 
         return ($precision * $recall) / (($this->alpha * $precision) + ((1.0 - $this->alpha) * $recall));
+    }
+
+    private function getMetricName(): string
+    {
+        return 'METEOR';
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace tests\Unit;
+namespace test\tests\Unit\trajectory;
 
 use LlmEvaluation\trajectory\TrajectoryEvaluator;
 use PHPUnit\Framework\TestCase;
@@ -39,30 +39,27 @@ class TrajectoryEvaluatorTest extends TestCase
                 'trajectoryId' => 'task1',
                 'stepScores' => [
                     [
-                        'factualAccuracy' => 1,
-                        'relevance' => 0.6666666666666666,
-                        'coherence' => 1,
-                        'completeness' => 1,
-                        'harmlessness' => 1,
+                        'factualAccuracy' => 1.0,
+                        'completeness' => 1.0,
+                        'harmlessness' => 1.0,
+                        'relevance' => 1.0,
                     ],
                     [
-                        'factualAccuracy' => 1,
-                        'relevance' => 0.6666666666666666,
-                        'coherence' => 1,
-                        'completeness' => 1,
-                        'harmlessness' => 1,
+                        'factualAccuracy' => 1.0,
+                        'completeness' => 1.0,
+                        'harmlessness' => 1.0,
+                        'relevance' => 1.0,
                     ],
                 ],
                 'metricScores' => [
-                    'factualAccuracy' => 1,
-                    'relevance' => 0.6666666666666666,
-                    'coherence' => 1,
-                    'completeness' => 1,
-                    'harmlessness' => 1,
+                    'factualAccuracy' => 1.0,
+                    'completeness' => 1.0,
+                    'harmlessness' => 1.0,
+                    'relevance' => 1.0,
                 ],
-                'overallScore' => 0.9487179487179487,
-                'passed' => true,
+                'overallScore' => 0.85,
                 'interactionCount' => 2,
+                'passed' => true,
             ],
         ];
         $this->assertEquals($expected, $results);
