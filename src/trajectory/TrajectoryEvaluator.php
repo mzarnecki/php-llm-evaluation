@@ -112,7 +112,7 @@ class TrajectoryEvaluator
         // Calculate average score for each metric
         $aggregateMetricScores = [];
         foreach ($metricScores as $metric => $scores) {
-            $aggregateMetricScores[$metric] = array_sum($scores) / count($scores);
+            $aggregateMetricScores[$metric] = round(array_sum($scores) / count($scores), 2);
         }
 
         // Calculate overall score (weighted by metric importance)

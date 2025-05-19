@@ -239,10 +239,8 @@ Results:
 ```
 
 ## 📚 Resources
-📖 For a detailed explanation of concepts used in this application, check out articles linked below:\
-https://en.wikipedia.org/wiki/ROUGE_(metric) \
-https://en.wikipedia.org/wiki/BLEU \
-https://en.wikipedia.org/wiki/METEOR 
+📖 For a detailed explanation of concepts used in this application, check out my article on medium.com linked below:\
+[Evaluating LLM and AI agents Outputs with String Comparison, Criteria & Trajectory Approaches](https://medium.com/p/c42d43c0cdc3)
 
 ## 👥 Contributing
 

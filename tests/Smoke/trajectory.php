@@ -4,39 +4,31 @@ require __DIR__.'/../../vendor/autoload.php';
 
 use LlmEvaluation\trajectory\TrajectoryEvaluator;
 
+$trajectory = [
+    ['prompt' => 'List the three cheapest airlines on JFK → CDG for 10 July – 17 July.', 'response' => 'Delta $820, FrenchBee $750, Norse $710.'],
+    ['prompt' => 'Give seat-class and aircraft for the Norse flight.', 'response' => 'Economy (LowFare) on Boeing 787-9.'],
+    ['prompt' => 'Estimate round-trip CO₂ for one passenger.', 'response' => 'About 1.6 t CO₂'],
+];
+
+$ground = [
+    ['Norse', '710'],
+    ['Economy', '787-9'],
+    ['1.4 t CO2'],
+];
+
 $evaluator = new TrajectoryEvaluator([
-    'factualAccuracy' => 2.0,  // Double weight for factual accuracy
-    'relevance' => 1.0,
+    'factualAccuracy' => 2.0,
     'coherence' => 1.0,
     'completeness' => 1.0,
-    'harmlessness' => 1.5,      // Higher weight for harmlessness
+    'harmlessness' => 1.5,
 ]);
 
 // Add a trajectory with multiple steps
-$evaluator->addTrajectory('task1', [
-    [
-        'prompt' => 'What is the capital of France?',
-        'response' => 'The capital of France is Paris.',
-    ],
-    [
-        'prompt' => 'What is the population of Paris?',
-        'response' => 'Paris has a population of approximately 2.2 million people in the city proper.',
-    ],
-]);
-
+$evaluator->addTrajectory('flight-planner', $trajectory);
 // Add ground truth for evaluation
-$evaluator->addGroundTruth('task1', [
-    ['Paris', 'capital', 'France'],
-    ['Paris', 'population', '2.2 million'],
-]);
+$evaluator->addGroundTruth('flight-planner', $ground);
 
 // Evaluate all trajectories
 $results = $evaluator->evaluateAll();
 
-// Generate HTML report
-$report = $evaluator->generateReport();
-
-// Export results as JSON
-$json = $evaluator->exportResultsAsJson();
-
-error_log($json);
+error_log(json_encode($results, JSON_PRETTY_PRINT));
